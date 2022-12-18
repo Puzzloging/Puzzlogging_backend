@@ -10,8 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TrashImageResponse {
     private String imagePath;
+    private String color;
 
-    public static TrashImageResponse of(String imagePath) {
-        return new TrashImageResponse(imagePath);
+    public static TrashImageResponse of(String imagePath, String color) {
+        return new TrashImageResponse(imagePath, color);
     }
 }
