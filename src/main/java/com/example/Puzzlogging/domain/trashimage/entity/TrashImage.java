@@ -3,12 +3,9 @@ package com.example.Puzzlogging.domain.trashimage.entity;
 import com.example.Puzzlogging.common.BaseTimeEntity;
 import com.example.Puzzlogging.domain.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-
 @Getter
 @NoArgsConstructor
 public class TrashImage extends BaseTimeEntity {
@@ -23,9 +20,18 @@ public class TrashImage extends BaseTimeEntity {
 
     private Long memberId;
 
-    public TrashImage(String imagePath, String color, Long memberId) {
+    @Builder(access = AccessLevel.PACKAGE)
+    private TrashImage(String imagePath, String color, Long memberId) {
         this.imagePath = imagePath;
         this.color = color;
         this.memberId = memberId;
+    }
+
+    public static TrashImage newInstance(String imagePath, String color, Long memberId) {
+        return TrashImage.builder()
+                .imagePath(imagePath)
+                .color(color)
+                .memberId(memberId)
+                .build();
     }
 }

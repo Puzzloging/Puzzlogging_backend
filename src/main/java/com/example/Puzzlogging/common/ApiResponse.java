@@ -21,10 +21,10 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> error(ErrorCode errorCode) {
-        return new ApiResponse<T>(false , null, ErrorDTO.of(errorCode));
+        return new ApiResponse<T>(false, null, ErrorDTO.of(errorCode));
     }
 
     public static <T> ApiResponse<T> error(ErrorCode errorCode, String message) {
-        return new ApiResponse<T>(false , null, ErrorDTO.of(errorCode, message));
+        return new ApiResponse<T>(false, null, ErrorDTO.of(errorCode, message));
     }
 }

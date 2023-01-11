@@ -8,10 +8,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.CopyObjectRequest;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import com.example.Puzzlogging.common.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,6 +61,8 @@ public class AwsS3 {
 
             s3Client.putObject(new PutObjectRequest(this.bucket, fileName, imageFile));
 
+            imageFile.delete();
+
             return s3Client.getUrl(bucket, fileName).toString();
 
         } catch (AmazonServiceException e) {
@@ -77,6 +76,13 @@ public class AwsS3 {
             throw new BaseException(BAD_GATEWAY);
         }
     }
+
+    public void download(String filePath) {
+        S3Object s3Object = s3Client.getObject(bucket, filePath);
+        S3ObjectInputStream inputStream = s3Object.getObjectContent();
+        //FileUtils.copyInputStreamToFile(inputStream, new File("/Users/user/Desktop/hello.txt"));
+    }
+
     public void copy(String orgDirName, String copyDirName) {
         try {
             //Copy 객체 생성

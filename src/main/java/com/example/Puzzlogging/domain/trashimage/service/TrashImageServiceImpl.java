@@ -22,22 +22,20 @@ public class TrashImageServiceImpl implements TrashImageService {
     private final TrashImageRepository trashImageRepository;
 
     @Override
-    public TrashImageResponse uploadTrashImage(Long memberId, MultipartFile imageFile) {
-
-        String filePath = awsS3.upload(imageFile, memberId + "/trashImage/" + UUID.randomUUID() + ".jpg");
-
-        return TrashImageResponse.of(filePath, "");
+    public TrashImage uploadTrashImage(CreateTrashImageRequest request, MultipartFile image) {
+        return request.toEntity(awsS3.upload(image, request.getMemberId() + "/trashImage/" + UUID.randomUUID() + ".jpg"));
     }
 
     @Override
     public List<TrashImageResponse> getTrashImageList(Long memberId) {
         return trashImageRepository.findAllByMemberId(memberId).stream()
-                .map(trashImage -> TrashImageResponse.of(trashImage.getImagePath(), trashImage.getColor()))
+                .map(TrashImageResponse::of)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void createTrashImage(Long memberId, CreateTrashImageRequest request) {
-        trashImageRepository.save(new TrashImage(request.getFilePath(), request.getColor(), memberId));
+    public TrashImageResponse addTrashImage(TrashImage trashImages) {
+        return TrashImageResponse.of(trashImageRepository.save(trashImages));
     }
+
 }
