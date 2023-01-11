@@ -171,8 +171,7 @@ public class ControllerExceptionAdvice {
     }
     @ExceptionHandler(DataIntegrityViolationException.class)
     protected ApiResponse<ErrorCode> handleException(DataIntegrityViolationException exception) {
-        System.out.println(exception.getLocalizedMessage()
-        );
-        return ApiResponse.error(CONFLICT);
+        System.out.println(exception.getLocalizedMessage());
+        return ApiResponse.error(BAD_GATEWAY);
     }
 }
