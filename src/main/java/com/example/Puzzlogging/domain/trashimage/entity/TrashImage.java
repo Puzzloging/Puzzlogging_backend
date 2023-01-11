@@ -1,7 +1,6 @@
 package com.example.Puzzlogging.domain.trashimage.entity;
 
 import com.example.Puzzlogging.common.BaseTimeEntity;
-import com.example.Puzzlogging.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -2,7 +2,6 @@ package com.example.Puzzlogging.domain.trashimage.service.dto;
 
 import com.example.Puzzlogging.domain.trashimage.entity.TrashImage;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
