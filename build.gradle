@@ -23,8 +23,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.376'
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.382'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+	implementation 'commons-io:commons-io:2.11.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'

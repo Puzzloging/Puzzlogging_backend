@@ -10,7 +10,9 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.example.Puzzlogging.common.exception.BaseException;
+import com.example.Puzzlogging.domain.trashimage.entity.TrashImage;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,10 +79,16 @@ public class AwsS3 {
         }
     }
 
-    public void download(String filePath) {
-        S3Object s3Object = s3Client.getObject(bucket, filePath);
-        S3ObjectInputStream inputStream = s3Object.getObjectContent();
-        //FileUtils.copyInputStreamToFile(inputStream, new File("/Users/user/Desktop/hello.txt"));
+    public void download(TrashImage image, String destPath) {
+        try {
+            S3Object s3Object = s3Client.getObject(bucket, image.getImageKey());
+            S3ObjectInputStream inputStream = s3Object.getObjectContent();
+            FileUtils.copyInputStreamToFile(inputStream, new File(destPath + File.separator + image.getImageName()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(BAD_GATEWAY);
+        }
+
     }
 
     public void copy(String orgDirName, String copyDirName) {
