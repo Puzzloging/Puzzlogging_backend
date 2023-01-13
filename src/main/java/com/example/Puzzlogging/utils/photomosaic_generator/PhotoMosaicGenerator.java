@@ -13,10 +13,12 @@ public class PhotoMosaicGenerator {
     public File generatePhotoMosaic() {
 
         try {
+            System.out.println("Generate Start");
             Runtime runtime = Runtime.getRuntime();
-            Process process = runtime.exec("cmd /c cd ../photomosaic_generator && python photomosaic_generator.py");
-            printStream(process);
+            Process process = runtime.exec("cmd /c cd ../photomosaic_generator && python photomosaic_generator.py --res 20 --tile 10");
 
+            printStream(process);
+            System.out.println(process.pid() + " Generate Finished");
             return new File("../photomosaic_generator/mosaic.jpg");
 
         } catch (IOException | InterruptedException e) {
