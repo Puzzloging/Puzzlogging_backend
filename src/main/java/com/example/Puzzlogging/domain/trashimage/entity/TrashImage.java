@@ -3,10 +3,14 @@ package com.example.Puzzlogging.domain.trashimage.entity;
 import com.example.Puzzlogging.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE trash_image SET deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted_at is null")
 public class TrashImage extends BaseTimeEntity {
 
     @Id
