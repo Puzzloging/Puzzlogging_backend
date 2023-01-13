@@ -10,4 +10,6 @@ import java.util.List;
 public interface TrashImageRepository extends JpaRepository<TrashImage, Long> {
 
     List<TrashImage> findAllByMemberId(Long memberId);
+
+    List<TrashImage> findByMemberIdAndColor(Long memberId, String color);
 }
