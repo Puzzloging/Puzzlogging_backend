@@ -17,7 +17,7 @@ public class MemberController {
 
     private final MemberServiceImpl memberService;
     @PostMapping("/login")
-    public ApiResponse<LoginResponse> login(LoginRequest request){
+    public ApiResponse<LoginResponse> login(@RequestBody LoginRequest request){
         return ApiResponse.success(memberService.login(request));
     }
 }

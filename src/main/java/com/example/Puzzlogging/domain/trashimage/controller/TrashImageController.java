@@ -25,7 +25,7 @@ public class TrashImageController {
     @PostMapping(path = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<TrashImageResponse> uploadTrashImage(
             @RequestPart MultipartFile image,
-            CreateTrashImageRequest request) {
+            @RequestPart CreateTrashImageRequest request) {
 
         if (image == null) {
             throw new BaseException(ErrorCode.INVALID);
