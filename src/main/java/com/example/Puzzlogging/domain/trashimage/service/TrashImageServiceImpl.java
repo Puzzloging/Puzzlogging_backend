@@ -23,7 +23,9 @@ public class TrashImageServiceImpl implements TrashImageService {
 
     @Override
     public TrashImage uploadTrashImage(CreateTrashImageRequest request, MultipartFile image) {
-        return request.toEntity(awsS3.upload(image, request.getMemberId() + "/trashImage/" + UUID.randomUUID() + ".jpg"));
+        String imageName = UUID.randomUUID() + ".jpg";
+        String imageKey = request.getMemberId() + "/trashImage/" + imageName;
+        return request.toEntity(awsS3.upload(image, imageKey), imageKey, imageName);
     }
 
     @Override

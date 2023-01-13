@@ -11,7 +11,7 @@ public class CreateTrashImageRequest {
     private Long memberId;
     private String color;
 
-    public TrashImage toEntity(String imagePath) {
-        return TrashImage.newInstance(imagePath, color, memberId);
+    public TrashImage toEntity(String imagePath, String imageKey, String imageName) {
+        return TrashImage.newInstance(imagePath, imageKey, imageName, color, memberId);
     }
 }
