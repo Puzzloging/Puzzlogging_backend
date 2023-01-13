@@ -1,5 +1,7 @@
 package com.example.Puzzlogging.domain.member.service;
 
+import com.example.Puzzlogging.common.exception.BaseException;
+import com.example.Puzzlogging.common.exception.type.ErrorCode;
 import com.example.Puzzlogging.domain.member.entity.Member;
 import com.example.Puzzlogging.domain.member.repository.MemberRepository;
 import com.example.Puzzlogging.domain.member.service.dto.LoginRequest;
@@ -17,6 +19,12 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public LoginResponse login(LoginRequest request) {
-        return LoginResponse.of(memberRepository.findByName(request.getName()));
+
+        System.out.println(request.getName());
+        Member member = memberRepository.findByName(request.getName()).orElseThrow(
+                () -> new BaseException(ErrorCode.NOTFOUND_USER)
+        );
+
+        return LoginResponse.of(member);
     }
 }
