@@ -23,7 +23,7 @@ public class PhotoMosaicImageController {
     private final PhotoMosaicImageService photoMosaicImageService;
 
     @Operation(summary = "모자이크 사진 생성", description = "memebrId를 PathValue로 받아 생성한다.")
-    @PostMapping("/photo-mosaic/{memberId}")
+    @PostMapping("/photo-mosaic")
     public ApiResponse<PhotoMosaicImageResponse> uploadPhotoMosaicImage(
             @RequestPart MultipartFile image,
             @RequestPart CreatePhotoMosaicImageRequest request) throws IOException {
