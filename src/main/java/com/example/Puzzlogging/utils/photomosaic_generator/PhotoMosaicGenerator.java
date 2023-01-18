@@ -1,7 +1,6 @@
 package com.example.Puzzlogging.utils.photomosaic_generator;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 
@@ -14,9 +13,9 @@ public class PhotoMosaicGenerator {
             System.out.println("Generate Start");
             Runtime runtime = Runtime.getRuntime();
             Process process = runtime.exec("cmd /c cd ./photomosaic_generator && python photomosaic_generator.py --res 20 --tile 10 --member " + memberId);
-
+            System.out.println(process.pid() + " process Start");
             printStream(process);
-            System.out.println(process.pid() + " Generate Finished");
+            System.out.println(process.pid() + " process Finished");
             return new File("./photomosaic_generator/" + memberId + "/mosaic.jpg");
 
         } catch (IOException | InterruptedException e) {
@@ -26,9 +25,11 @@ public class PhotoMosaicGenerator {
 
     public void printStream(Process process) throws IOException, InterruptedException {
         process.waitFor();
+        System.out.println(process.pid() + " print Start");
         try (InputStream psout = process.getInputStream()) {
             copy(psout, System.out);
         }
+        System.out.println(process.pid() + " print Finish");
     }
 
     public void copy(InputStream input, OutputStream output) throws IOException, InterruptedException {
@@ -56,7 +57,7 @@ public class PhotoMosaicGenerator {
 
         mkMemberMainImageDir(memberDirPath);
         mkMemberFillerImagesDir(memberDirPath);
-
+        createLockFile(memberDirPath);
         return memberDir;
     }
 
@@ -83,6 +84,17 @@ public class PhotoMosaicGenerator {
                 e.getStackTrace();
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    private void createLockFile(String memberDirPath) {
+        File LockFile = new File(memberDirPath  + File.separator +  ".lock");
+
+        try {
+            LockFile.createNewFile();
+        } catch (IOException e) {
+            e.getStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }

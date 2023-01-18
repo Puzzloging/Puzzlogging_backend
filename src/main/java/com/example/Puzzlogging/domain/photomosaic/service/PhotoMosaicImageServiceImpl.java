@@ -1,5 +1,7 @@
 package com.example.Puzzlogging.domain.photomosaic.service;
 
+import com.example.Puzzlogging.common.exception.BaseException;
+import com.example.Puzzlogging.common.exception.type.ErrorCode;
 import com.example.Puzzlogging.domain.photomosaic.entity.PhotoMosaicImage;
 import com.example.Puzzlogging.domain.photomosaic.repository.PhotoMosaicImageRepository;
 import com.example.Puzzlogging.domain.photomosaic.service.dto.CreatePhotoMosaicImageRequest;
@@ -13,10 +15,12 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,7 +30,6 @@ import java.util.stream.Collectors;
 public class PhotoMosaicImageServiceImpl implements PhotoMosaicImageService {
 
     private final AwsS3 awsS3;
-
     private final PhotoMosaicGenerator generator;
     private final PhotoMosaicImageRepository photoMosaicImageRepository;
     private final TrashImageRepository trashImageRepository;
@@ -36,9 +39,19 @@ public class PhotoMosaicImageServiceImpl implements PhotoMosaicImageService {
         //멤버 작업 폴더 생성
         File memberDir = generator.mkMemberDir(request.getMemberId());
         String memberDirPath = memberDir.getAbsolutePath();
+
+        Path lockPath = Paths.get(memberDirPath + File.separator + ".lock").toAbsolutePath();
+        FileChannel fileChannel = FileChannel.open(lockPath, StandardOpenOption.WRITE);
+
+        //락 학인
+        FileLock fileLock = fileChannel.tryLock();
+        if (fileLock == null) {
+            throw new BaseException(ErrorCode.WAIT_TO_GENERATE);
+        }
+
         //메인 사진 저장
-        Path path = Paths.get(memberDirPath + File.separator + "main_image" + File.separator + "img.jpg").toAbsolutePath();
-        image.transferTo(path.toFile());
+        Path mainImagePath = Paths.get(memberDirPath + File.separator + "main_image" + File.separator + "img.jpg").toAbsolutePath();
+        image.transferTo(mainImagePath.toFile());
 
         //타일 파일 가져와서 저장
         List<TrashImage> trashImages = request.getColors().stream()
@@ -47,10 +60,20 @@ public class PhotoMosaicImageServiceImpl implements PhotoMosaicImageService {
 
         //모자이크 사진 생성후 업로드
         File file = generator.generatePhotoMosaic(request.getMemberId());
-        String imagePath = awsS3.upload(file, request.getMemberId() + "/photoMosaicImage/" + UUID.randomUUID() + ".jpg");
+        String imagePath;
 
+        if (file.exists()) {
+            imagePath = awsS3.upload(file, request.getMemberId() + "/photoMosaicImage/" + UUID.randomUUID() + ".jpg");
+        } else {
+            throw new BaseException(ErrorCode.FAIL_TO_GENERATE);
+        }
         // 사용된 타일 사진 삭제
         trashImageRepository.deleteAll(trashImages);
+
+        //lock 해제
+        fileLock.release();
+        fileChannel.close();
+
         //멤버 작업 폴더 삭제
         FileUtils.deleteDirectory(memberDir);
 

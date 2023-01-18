@@ -50,6 +50,11 @@ public enum ErrorCode {
 
     // 503 Service UnAvailable
     SERVICE_UNAVAILABLE("SU000", "현재 해당 기능은 점검 중입니다.\n잠시 후 다시 시도해주세요!"),
+
+    // 511 모자이크 패턴 사진 생성 실패
+    FAIL_TO_GENERATE("FG000", "모자이크 패턴 사진 생성 실패"),
+    // 512 모자이크 패턴 사진 생성 중
+    WAIT_TO_GENERATE("FG000", "모자이크 패턴 사진 생성 중입니다.\n잠시 후 다시 시도해주세요!"),
     ;
 
     private final String code;

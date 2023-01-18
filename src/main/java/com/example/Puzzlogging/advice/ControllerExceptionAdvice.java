@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
+import java.nio.channels.OverlappingFileLockException;
+
 import static com.example.Puzzlogging.common.exception.type.ErrorCode.*;
 import static java.util.stream.Collectors.joining;
 
@@ -173,5 +175,12 @@ public class ControllerExceptionAdvice {
     protected ApiResponse<ErrorCode> handleException(DataIntegrityViolationException exception) {
         System.out.println(exception.getLocalizedMessage());
         return ApiResponse.error(BAD_GATEWAY);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    @ExceptionHandler(OverlappingFileLockException.class)
+    private ApiResponse<Object> handleOverlappingFileLockException(OverlappingFileLockException e) {
+        log.error(e.getMessage(), e);
+        return ApiResponse.error(WAIT_TO_GENERATE);
     }
 }
