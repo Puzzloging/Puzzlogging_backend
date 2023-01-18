@@ -40,16 +40,17 @@ public class PhotoMosaicImageServiceImpl implements PhotoMosaicImageService {
         Path path = Paths.get(memberDirPath + File.separator + "main_image" + File.separator + "img.jpg").toAbsolutePath();
         image.transferTo(path.toFile());
 
-        //타일 파일 가져와서 저장 후 삭제
+        //타일 파일 가져와서 저장
         List<TrashImage> trashImages = request.getColors().stream()
                 .map(color -> trashImageRepository.findByMemberIdAndColor(request.getMemberId(), color).stream().findAny().get()).toList();
         trashImages.forEach(trashImage -> awsS3.download(trashImage, memberDirPath + File.separator + "filler_images"));
-        trashImageRepository.deleteAll(trashImages);
 
         //모자이크 사진 생성후 업로드
         File file = generator.generatePhotoMosaic(request.getMemberId());
         String imagePath = awsS3.upload(file, request.getMemberId() + "/photoMosaicImage/" + UUID.randomUUID() + ".jpg");
 
+        // 사용된 타일 사진 삭제
+        trashImageRepository.deleteAll(trashImages);
         //멤버 작업 폴더 삭제
         FileUtils.deleteDirectory(memberDir);
 
